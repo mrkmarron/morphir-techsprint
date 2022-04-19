@@ -1,3 +1,15 @@
+## Main Branch Rename
+The `master` branch has been renamed to `main`. 
+
+Please use the instructions below to rename locally.
+
+```
+git branch -m master main
+git fetch origin
+git branch -u origin/main main
+git remote set-head origin -a
+```
+
 <img align="right" width="40%" src="https://www.finos.org/hubfs/FINOS/finos-logo/FINOS_Icon_Wordmark_Name_RGB_horizontal.png">
 
 # FINOS Software Project Blueprint
