@@ -25,3 +25,6 @@ The goal of this tech sprint is to investigate the viability of using FINOS Morp
 
 
 See [FINOS Blueprints](finos-blueprint.md) for bookkeeping.
+
+## Morphir / REGnosys Tech Sprint Sketch
+![Morphir _ REGnosys Tech Sprint Sketch](https://user-images.githubusercontent.com/6029572/165322376-cd716cf0-79c5-4e51-873a-2c9917877250.png)
