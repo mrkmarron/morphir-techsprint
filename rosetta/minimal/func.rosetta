@@ -1,0 +1,2 @@
+namespace finos.labs.morphir.techsprint
+version "${project.version}"

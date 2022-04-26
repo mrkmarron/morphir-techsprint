@@ -1,0 +1,61 @@
+namespace finos.labs.morphir.techsprint
+version "${project.version}"
+
+segment rationale
+segment rationale_author
+segment structured_provision
+
+segment article
+segment whereas
+segment annex
+segment table
+segment section
+segment field
+segment paragraph
+segment question
+segment dataElement
+segment appendix
+
+annotation enrichment:
+annotation decomposition:
+
+body Authority CFTC <"Commodity Futures Trading Commission (CFTC): The Federal regulatory agency established by the Commodity Futures Trading Act of 1974 to administer the Commodity Exchange Act.">
+
+corpus Regulation "CFTC 17 CFR Parts 45" Part45 <"Part 45 of the CFTCs regulations specifies the Commissions swap data recordkeeping and reporting requirements, pursuant to section 2(a)(13)(G) of the Commodity Exchange Act (CEA), which states that all swaps, whether cleared or uncleared, must be reported to a Swap Data Repository (SDR)">
+
+corpus Software "Morphir" Morphir <"Morphir is a library of tools that works to capture business logic as data.">
+
+report CFTC Part45 Morphir in T+1
+    when ReportableEvent
+  	with type CFTCPart45TransactionReport
+
+eligibility rule ReportableEvent <"When eligible for Part45">
+	[regulatoryReference CFTC Part45 section "45.3(b)"
+   		provision "For each off-facility swap, the reporting counterparty shall report required swap creation data electronically to a swap data repository as provided by paragraph (b)(1) or (2) of this section, as applicable.
+            (1) If the reporting counterparty is a swap dealer, major swap participant, or derivatives clearing organization, the reporting counterparty shall report required swap creation data electronically to a swap data repository in the manner provided in  45.13(a) not later than the end of the next business day following the execution date.
+            (2) If the reporting counterparty is a non-SD/MSP/DCO counterparty, the reporting counterparty shall report required swap creation data electronically to a swap data repository in the manner provided in  45.13(a) not later than the end of the second business day following the execution date. "]
+		filter when ReportableEvent -> reportableTrade exists
+
+
+type CFTCPart45TransactionReport:
+
+    tradeDate date (1..1)
+        [ruleReference TradeDate]
+
+    eventTimestamp zonedDateTime (1..1)
+        [ruleReference EventTimestamp]
+
+reporting rule TradeDate <"Trade Date">
+    [regulatoryReference CFTC Part45 appendix "1" dataElement "30" field "Trade Date"
+        provision "Date and time of occurrence of the event as determined by the reporting counterparty or a service provider. In the case of a clearing event, date and time when the original swap is accepted by the derivative clearing organization (DCO) for clearing and recorded by the DCOs system should be reported in this data element. The time element is as specific as technologically practicable."]
+    extract ReportableEvent -> reportableTrade -> trade -> tradeDate 
+    as "Trade timestamp"
+
+reporting rule EventTimestamp <"Event Timestamp">
+    [regulatoryReference CFTC Part45 appendix "1" dataElement "30" field "Event Timestamp"
+        provision "Date and time of occurrence of the event as determined by the reporting counterparty or a service provider. In the case of a clearing event, date and time when the original swap is accepted by the derivative clearing organization (DCO) for clearing and recorded by the DCOs system should be reported in this data element. The time element is as specific as technologically practicable."]
+    extract ReportableEvent -> originatingWorkflowStep -> timestamp  then
+        filter when EventTimestamp -> qualification = EventTimestampQualificationEnum -> eventCreationDateTime then
+        	extract EventTimestamp -> dateTime
+    as "30 Event timestamp"
+
