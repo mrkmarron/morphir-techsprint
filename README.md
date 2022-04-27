@@ -1,7 +1,6 @@
 # Rosetta to Morphir Tech Sprint
 The goal of this tech sprint is to investigate the viability of using FINOS Morphir as a compile target for the Rosetta domain specific programming language.
 
-
 ## Sprint Repos
 - [morphir-techsprint](https://github.com/finos-labs/morphir-techsprint)
 - [rosetta-code-generators](https://github.com/finos-labs/rosetta-code-generators)
@@ -13,6 +12,11 @@ The goal of this tech sprint is to investigate the viability of using FINOS Morp
 
 ## Sprint Discussions
 - Discussions - https://github.com/finos-labs/morphir-techsprint/discussions
+
+## Shared Google Slide
+
+Please request access to the Google Slide below to edit
+- https://docs.google.com/presentation/d/1WraiDoZiTnZRf12Px_h2MTnyZU1BRRklNWA2_XAnY_g/edit?usp=sharing
 
 ## The components
 * Input Rosetta model
