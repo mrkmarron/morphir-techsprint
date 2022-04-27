@@ -4,7 +4,7 @@ version "${project.version}"
 type ReportableEvent: <"Specifies a workflowstep with enriched information required for reporting.">
 	[rootType]
     originatingWorkflowStep WorkflowStep (1..1) <"The workflowstep that originated the reportable event.">
-    reportableTrade TradeState (0..1) <"The reportable trade decomposed from the originating workflow step when required.">
+    reportableTrade TradeState (1..1) <"The reportable trade decomposed from the originating workflow step when required.">
 
 type WorkflowStep: <"A workflow step represents the state of a business event. The workflow step contains a reference to a previous WorkflowStep in order to preserve lineage. A workflow step is accepted if it contains a business event, proposed if proposedInstruction is present and is rejected if the rejected flag is set.">
 	[metadata key]
@@ -28,4 +28,3 @@ type Trade: <"Defines the output of a financial transaction between parties - a 
 	[metadata key]
 	tradeDate date (1..1) <"Specifies the date which the trade was agreed.">
         [metadata id]
-

@@ -1,8 +1,9 @@
 module Morphir.TechSprint.Minimal.Rule exposing (..)
 
+import Morphir.TechSprint.Minimal.Any exposing (Any)
 import Morphir.TechSprint.Minimal.BasicTypes exposing (Date, ZonedDateTime)
 import Morphir.TechSprint.Minimal.Enum as Enum
-import Morphir.TechSprint.Minimal.Type exposing (ReportableEvent)
+import Morphir.TechSprint.Minimal.Type exposing (ReportableEvent, TradeState, WorkflowStep)
 
 
 
@@ -11,24 +12,24 @@ import Morphir.TechSprint.Minimal.Type exposing (ReportableEvent)
 --    tradeDate date (1..1)
 --        [ruleReference TradeDate]
 --
---    eventTimestamp zonedDateTime (1..1)
+--    eventTimestamp zonedDateTime (0..1)
 --        [ruleReference EventTimestamp]
 
 
 type alias CFTCPart45TransactionReport =
     { tradeDate : Date
-    , eventTimestamp : ZonedDateTime
+    , eventTimestamp : Maybe ZonedDateTime
     }
 
 
 {-| The assumption here is that the type definition for the report contains multiplicities for each field in a row but
 at the top-level there can always be any number of rows returned (0..\*) and rule results are cartesian joined.
 -}
-cFTCPart45TransactionReport : ReportableEvent -> List CFTCPart45TransactionReport
+cFTCPart45TransactionReport : ReportableEvent -> CFTCPart45TransactionReport
 cFTCPart45TransactionReport reportableEvent =
-    crossJoin2 CFTCPart45TransactionReport
-        (tradeDate reportableEvent)
-        (eventTimestamp reportableEvent)
+    { tradeDate = tradeDate reportableEvent
+    , eventTimestamp = eventTimestamp reportableEvent
+    }
 
 
 
@@ -39,38 +40,9 @@ cFTCPart45TransactionReport reportableEvent =
 --    as "Trade timestamp"
 
 
-tradeDate : ReportableEvent -> List Date
+tradeDate : ReportableEvent -> Date
 tradeDate reportableEvent =
-    reportableEvent.reportableTrade
-        |> Maybe.map
-            (\reportableTrade ->
-                reportableTrade.trade.tradeDate
-            )
-        |> maybeToList
-
-
-{-| This is a helper function to turn (0..1) multiplicity into (0..\*)
--}
-maybeToList : Maybe a -> List a
-maybeToList maybe =
-    maybe
-        |> Maybe.map List.singleton
-        |> Maybe.withDefault []
-
-
-{-| This is a utility to create a cartesian product of two lists.
--}
-crossJoin2 : (a -> b -> c) -> List a -> List b -> List c
-crossJoin2 f listA listB =
-    listA
-        |> List.concatMap
-            (\a ->
-                listB
-                    |> List.map
-                        (\b ->
-                            f a b
-                        )
-            )
+    reportableEvent.reportableTrade.trade.tradeDate
 
 
 
@@ -84,14 +56,25 @@ crossJoin2 f listA listB =
 --
 
 
-eventTimestamp : ReportableEvent -> List ZonedDateTime
+eventTimestamp : ReportableEvent -> Maybe ZonedDateTime
 eventTimestamp reportableEvent =
     reportableEvent.originatingWorkflowStep.timestamp
         |> List.filter
-            (\et ->
-                et.qualification == Enum.EventCreationDateTime
+            (\item ->
+                item.qualification == Enum.EventCreationDateTime
             )
         |> List.map
-            (\et ->
-                et.dateTime
+            (\item ->
+                item.dateTime
             )
+        |> onlyElement
+
+
+onlyElement : List a -> Maybe a
+onlyElement list =
+    case list of
+        [ a ] ->
+            Just a
+
+        _ ->
+            Nothing

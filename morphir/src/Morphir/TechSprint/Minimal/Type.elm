@@ -13,7 +13,7 @@ import Morphir.TechSprint.Minimal.Enum exposing (EventTimestampQualificationEnum
 
 type alias ReportableEvent =
     { originatingWorkflowStep : WorkflowStep
-    , reportableTrade : Maybe TradeState
+    , reportableTrade : TradeState
     }
 
 
