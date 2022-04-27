@@ -1,6 +1,5 @@
 module Morphir.TechSprint.Minimal.Rule exposing (..)
 
-import Morphir.TechSprint.Minimal.Any exposing (Any)
 import Morphir.TechSprint.Minimal.BasicTypes exposing (Date, ZonedDateTime)
 import Morphir.TechSprint.Minimal.Enum as Enum
 import Morphir.TechSprint.Minimal.Type exposing (ReportableEvent, TradeState, WorkflowStep)
