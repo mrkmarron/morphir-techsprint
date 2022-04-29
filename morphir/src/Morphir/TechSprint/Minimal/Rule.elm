@@ -77,3 +77,7 @@ onlyElement list =
 
         _ ->
             Nothing
+
+main : ReportableEvent -> Maybe ZonedDateTime
+main reportableEvent = 
+    eventTimestamp reportableEvent
